@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Hidden Places</title>
+    <!-- Bootstrap Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #1a1a1a;
+            --darker-bg: #121212;
+            --yellow-accent: #ffc107;
+        }
+        body {
+            background: var(--darker-bg);
+            color: #e0e0e0;
+        }
+        .sidebar {
+            background: var(--dark-bg);
+            border-right: 1px solid #333;
+            height: 100vh;
+            position: fixed;
+        }
+        .nav-link {
+            color: #aaa;
+            border-left: 3px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: #333;
+            border-left: 3px solid var(--yellow-accent);
+        }
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            margin-right: 8px;
+        }
+        .card {
+            background: var(--dark-bg);
+            border: 1px solid #333;
+        }
+        .card-header {
+            border-bottom: 1px solid #333;
+            background: rgba(255, 193, 7, 0.1);
+        }
+        .table {
+            color: #e0e0e0;
+        }
+        .table-hover tbody tr:hover {
+            background: rgba(255, 193, 7, 0.05);
+        }
+        .badge-admin {
+            background: var(--yellow-accent);
+            color: #000;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar col-md-3 col-lg-2 d-md-block">
+        <div class="text-center py-4">
+            <h4 class="text-warning">HIDDEN PLACES</h4>
+            <small class="text-white-50">Admin Dashboard</small>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#users">
+                    <i class="fas fa-users"></i> Users
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#places">
+                    <i class="fas fa-map-marked-alt"></i> Places
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between mb-4">
+            <h3 class="text-warning">
+                <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+            </h3>
+            <div class="text-end">
+                <span class="badge badge-admin p-2">
+                    <i class="fas fa-user-shield me-1"></i> ADMIN
+                </span>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Users</h5>
+                        <h2 class="text-warning">{{ users|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Places</h5>
+                        <h2 class="text-warning">{{ places|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">New Today</h5>
+                        <h2 class="text-warning">{{ today_places }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card mb-4" id="users">
+            <div class="card-header">
+                <h5><i class="fas fa-users me-2"></i>User Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Places</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.first_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.places|length }}</td>
+                                <td>
+                                    {% if user.is_admin %}
+                                        <span class="badge badge-admin">Admin</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">User</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-edit">bt</i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger ms-1">
+                                        <i class="fas fa-trash-alt">bt</i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Places Table -->
+        <div class="card" id="places">
+            <div class="card-header">
+                <h5><i class="fas fa-map-marked-alt me-2"></i>Place Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Place Name</th>
+                                <th>Location</th>
+                                <th>Added By</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for place in places %}
+                            <tr>
+                                <td>{{ place.id }}</td>
+                                <td>{{ place.name }}</td>
+                                <td>{{ place.location }}</td>
+                                <td>{{ place.author.first_name }}</td>
+                                <td>{{ place.timestamp|datetimeformat }}</td>
+                                <td>
+                                    <a href="{{ url_for('edit_place', place_id=place.id) }}" 
+                                       class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ url_for('delete_place', place_id=place.id) }}" 
+                                          method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+                                            <i class="fas fa-trash-alt">btn</i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Simple confirmation for delete actions
+        document.querySelectorAll('.btn-outline-danger').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if (!confirm('Are you sure you want to delete this item?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

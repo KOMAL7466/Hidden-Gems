@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Hidden Places</title>
+    <!-- Bootstrap Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #1a1a1a;
+            --yellow-accent: #ffc107;
+        }
+        body {
+            background: var(--dark-bg);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+        }
+        .admin-card {
+            background: #262626;
+            border: 1px solid var(--yellow-accent);
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.1);
+        }
+        .admin-header {
+            border-bottom: 2px solid var(--yellow-accent);
+        }
+        .form-control {
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+        }
+        .form-control:focus {
+            border-color: var(--yellow-accent);
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        }
+        .btn-admin {
+            background: var(--yellow-accent);
+            color: #000;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <div class="card admin-card">
+            <div class="card-header admin-header text-center py-3">
+                <h3 class="mb-0 text-warning">ADMIN PORTAL</h3>
+                <small class="text-white-50">Hidden Places Management</small>
+            </div>
+            <div class="card-body p-4">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert">alertbtn</button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('admin_login') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Admin Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-admin w-100 py-2">Login</button>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3">
+                <a href="{{ url_for('login') }}" class="text-warning text-decoration-none">
+                    ← Return to User Login
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+/* 🌑 Background Styling */
+:root {
+    --dark-bg: #1a1a1a;
+    --accent-yellow: #FFD700;
+    --warm-white: #fdfdfd;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--warm-white);
+    overflow-x: hidden;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: rgba(26, 26, 26, 0.95) !important;
+    border-bottom: 2px solid var(--accent-yellow);
+}
+
+.nav-link {
+    color: var(--warm-white) !important;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--accent-yellow) !important;
+}
+
+.login-btn {
+    background: var(--accent-yellow);
+    color: var(--dark-bg) !important;
+    border-radius: 25px;
+    padding: 8px 25px !important;
+    font-weight: 600;
+}
+.login-btn:hover {
+    background-color: #fadf74 !important; /* Lighter gold */
+    box-shadow: 0 0 15px rgba(250, 221, 54, 0.6);
+}
+
+
+/* Hero Section */
+.hero-section {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('/static/images/hero\ img.jpg') center/cover;
+    display: flex;
+    align-items: center;
+}
+
+.hero-heading {
+    font-size: 4rem;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientAnim 3s infinite alternate;
+}
+
+@keyframes gradientAnim {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* About Section */
+.about-section {
+    padding: 100px 0;
+    border-top: 3px solid var(--accent-yellow);
+}
+
+.animated-text {
+    position: relative;
+    display: inline-block;
+}
+
+.animated-text::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--accent-yellow);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.animated-text:hover::after {
+    transform: scaleX(1);
+}
+
+/* Gallery Section */
+.gallery-section {
+    padding: 80px 0;
+}
+
+.place-card {
+    background: #2d2d2d;
+    border-radius: 15px;
+    transition: transform 0.3s;
+    border: 1px solid #3d3d3d;
+}
+
+.place-card:hover {
+    transform: translateY(-10px);
+}
+
+.place-img {
+    height: 250px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Testimonials Section */
+/* Container for testimonial cards */
+.testimonial-container {
+    display: flex;
+    gap: 20px; /* Space between cards */
+    flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
+/* Individual testimonial card */
+.testimonial-card {
+    background: #2d2d2d;
+    border-radius: 15px;
+    border: 1px solid #3d3d3d;
+    flex: 1; /* Make cards flexible */
+    min-width: calc(50% - 10px); /* Each card takes half width minus gap */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+
+.testimonial-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 2px solid var(--accent-yellow);
+}
+/* Footer */
+.footer {
+    background: #121212;
+    padding: 50px 0;
+    margin-top: 100px;
+}
+/* Login page  */
+
+
+.login-box {
+    /* margin-top: 50PX; */
+    background: #2d2d2d;
+    border: 2px solid var(--accent-yellow);
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 400px;
+    margin: 50px auto;
+}
+
+.form-control {
+    background: #3d3d3d;
+    border: 1px solid #4d4d4d;
+    color: white;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255,215,0,0.25);
+    border-color: var(--accent-yellow);
+}
+
+.login-btn {
+    background: var(--accent-yellow);
+    color: #000;
+    font-weight: 600;
+}
+/* register page  */
+
+        /* Same styles as login page */
+        .register-box {
+            margin-top: 50PX;
+            background: #2d2d2d;
+            border: 2px solid var(--accent-yellow);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 400px;
+            margin: 50px auto;
+        }
+    /* dashboard page  */
+    
+    body{
+        background-color: #000 important!;
+    }
+    .dashboard-nav {
+        background: #2d2d2d;
+        border-bottom: 2px solid var(--accent-yellow);
+    }
+
+    .table-custom {
+        background: #2d2d2d;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table-custom thead {
+        background: #3d3d3d;
+        color: var(--accent-yellow);
+    }
+
+    .table-custom td, .table-custom th {
+        border-color: #4d4d4d;
+        vertical-align: middle;
+    }
+
+    .btn-edit {
+        background: var(--accent-yellow);
+        color: var(--dark-bg);
+        border: none;
+    }
+
+    .btn-delete {
+        background: #f7041c;
+        color: white;
+        border: none;
+    }
+
+    .disabled-btn {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #FFAB00;
+    }
+
+    .place-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+      .btn-home {
+          background: #28a745;
+          color: white;
+          border: none;
+          transition: all 0.3s;
+      }
+      .btn-home:hover {
+          background: #218838;
+          color: white;
+      }
+  
+  Run
+    .welcome-banner {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                    url('/static/images/hero\ img.jpg');
+        background-size: cover;
+        border-radius: 8px;
+    }
+    /* add places page  */
+   
+
+    .form-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #2d2d2d;
+        border-radius: 15px;
+        border: 1px solid #3d3d3d;
+    }
+
+    .form-label {
+        color: var(--accent-yellow);
+    }
+
+    .form-control {
+        background: #3d3d3d;
+        border: 1px solid #4d4d4d;
+        color: var(--warm-white);
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        background: #4d4d4d;
+        border-color: var(--accent-yellow);
+        box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+    }
+
+    .image-preview {
+        width: 300px;
+        height: 300px;
+        border: 2px dashed #4d4d4d;
+        border-radius: 8px;
+        overflow: hidden;
+        display: none;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .submit-btn {
+        background: var(--accent-yellow);
+        color: var(--dark-bg);
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+        background: #FFAB00;
+    }
+
+    .custom-file-input::-webkit-file-upload-button {
+        visibility: hidden;
+    }
+
+    .custom-file-input::before {
+        content: 'Choose Image';
+        display: inline-block;
+        background: var(--accent-yellow);
+        color: var(--dark-bg);
+        border-radius: 4px;
+        padding: 8px 16px;
+        outline: none;
+        white-space: nowrap;
+        cursor: pointer;
+        font-weight: 500;
+    }
+/* edit place  */
+
+
+.form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #2d2d2d;
+    border-radius: 15px;
+    border: 1px solid #3d3d3d;
+}
+
+.existing-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--accent-yellow);
+}
+
+.update-btn {
+    background: var(--accent-yellow);
+    color: var(--dark-bg);
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.update-btn:hover {
+    background: #FFAB00;
+}
+
+.form-control {
+    background: #3d3d3d;
+    border: 1px solid #4d4d4d;
+    color: var(--warm-white);
+}
+
+.form-control:focus {
+    background: #4d4d4d;
+    border-color: var(--accent-yellow);
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+}
+.text-muted {
+    --bs-text-opacity: 1;
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+.btn-danger.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Gems | Discover Secret Places</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <h3 class="fw-bold" style="color: var(--accent-yellow);">Hidden Gems</h3>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon">btn</span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="#gallery">Gallery</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="#testimonials">Reviews</a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link login-btn" href="{{ url_for('login') }}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-12">
+                    <h1 class="hero-heading mb-4 fw-bold">Discover Hidden Treasures</h1>
+                    <p class="lead mb-4">Share your secret spots with the world</p>
+
+                    <a href="{{ url_for('add_place') }}" class="btn btn-lg login-btn">Add Your Place</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="animated-text mb-4">About Hidden Gems</h2>
+                    <p class="lead" style="border-left: 3px solid var(--accent-yellow); padding-left: 20px;">
+                        Share those special places only locals know about. Turn hidden corners into beloved destinations
+                        while preserving their unique charm. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Recusandae, veniam? Praesentium magni sed illum magnam accusamus consectetur quo eveniet vitae
+                        quas temporibus. Nostrum.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="/static/images/About-map.jpg" alt="Map" class="img-fluid" style="max-height: 400px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="animated-text mb-4">Featured Hidden Places</h2>
+            <div class="row g-4">
+                {% for place in places %}
+                <div class="col-md-6">
+                    <div class="place-card">
+                        <img src="/static/uploads/{{ place.image }}" class="place-img w-100" alt="{{ place.name }}">
+                        <div class="p-4">
+                            <h4>{{ place.name }}</h4>
+                            <p class="text-muted">{{ place.location }}</p>
+                            <p>{{ place.description[:100] }}...</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-5">
+                <a href="{{ url_for('login') }}" class="btn login-btn">Add Your Hidden Place</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonial-section py-5">
+        <div class="container">
+            <h2 class="animated-text mb-4">Visitor Experiences</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/static/images/user 1.png" class="testimonial-img rounded-circle me-3" alt="User">
+                            <div>
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <small>Travel Blogger</small>
+                            </div>
+                        </div>
+                        <p class="mb-0">"Found the most amazing secluded beach through this platform! Exactly the kind
+                            of authentic experience I was looking for."</p>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/static/images/user 1.png" class="testimonial-img rounded-circle me-3" alt="User">
+                            <div>
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <small>Travel Blogger</small>
+                            </div>
+                        </div>
+                        <p class="mb-0">"Found the most amazing secluded beach through this platform! Exactly the kind
+                            of authentic experience I was looking for."</p>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/static/images/user 1.png" class="testimonial-img rounded-circle me-3" alt="User">
+                            <div>
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <small>Travel Blogger</small>
+                            </div>
+                        </div>
+                        <p class="mb-0">"Found the most amazing secluded beach through this platform! Exactly the kind
+                            of authentic experience I was looking for."</p>
+                    </div>
+
+                </div>
+
+                <!-- Add more testimonials -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="animated-text mb-4">Hidden Gems
+                    </h5>
+                    <p class="text-muted" style="color: (--accent-yellow);">Preserving the world's secret wonders</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="social-links">
+                        <a href="mailto:komal7466208@gmail.com" class="text-decoration-none me-3" style="color: var(--accent-yellow);">Email</a>
+                        <a href="https://www.linkedin.com/in/komal-komal-0b14a622b/" class="text-decoration-none me-3" style="color: var(--accent-yellow);">Linkdin</a>
+                        <a href="https://wa.me/917494927621" class="text-decoration-none" style="color: var(--accent-yellow);">Hire Me</a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <p class="text-center text-muted mb-0 " style="color: (--accent-yellow);">&copy; 2025 Hidden Gems. All
+                rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add scroll animation for testimonials
+        document.addEventListener('DOMContentLoaded', function () {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.testimonial-card').forEach((card) => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(50px)';
+                card.style.transition = 'all 0.5s ease-out';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+
+</html>

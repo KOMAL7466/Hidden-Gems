@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Place | Hidden Gems</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ 
+ 
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <h4 style="color: var(--accent-yellow);">Hidden Gems</h4>
+            </a>
+            <div class="d-flex gap-3">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-sm" style="color: var(--accent-yellow);">← Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4" style="color: var(--accent-yellow);">Edit {{ place.name }}</h2>
+            
+            <!-- Flash Msg -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Current Image -->
+                        <div class="mb-4 text-center">
+                            <img src="{{ url_for('static', filename='uploads/' + place.image) }}" 
+                                 class="existing-image mb-3" 
+                                 alt="Current Image">
+                            <p class="text-muted mb-0">Current Image</p>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-4">
+                            <label for="image" class="form-label">Update Image (800x800px)</label>
+                            <input type="file" 
+                                   class="form-control" 
+                                   id="image" 
+                                   name="image" 
+                                   accept="image/*"
+                                   onchange="previewImage(event)">
+                            <small class="text-muted">Leave empty to keep existing image</small>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Name Field -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Place Name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name" 
+                                   value="{{ place.name }}" 
+                                   required>
+                        </div>
+
+                        <!-- Location Field -->
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="location" 
+                                   name="location" 
+                                   value="{{ place.location }}" 
+                                   required>
+                        </div>
+
+                        <!-- Best Time to Visit -->
+                        <div class="mb-3">
+                            <label for="best_time" class="form-label">Best Time to Visit</label>
+                            <select class="form-select" id="best_time" name="best_time" required>
+                                {% for time in ['Winter', 'Spring', 'Summer', 'Autumn', 'All Year'] %}
+                                <option value="{{ time }}" {% if time == place.best_time %}selected{% endif %}>
+                                    {{ time }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Field -->
+                <div class="mb-4">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" 
+                              id="description" 
+                              name="description" 
+                              rows="4" 
+                              maxlength="500"
+                              required>{{ place.description }}</textarea>
+                    <div class="text-end text-muted mt-1">
+                        <span id="charCount">{{ place.description|length }}</span>/500
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="update-btn">Update Place</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Character Counter
+        const description = document.getElementById('description')
+        const charCount = document.getElementById('charCount')
+        
+        description.addEventListener('input', () => {
+            charCount.textContent = description.value.length
+        })
+
+        // Image Preview for New Uploads
+        function previewImage(event) {
+            const input = event.target
+            const preview = document.createElement('img')
+            preview.className = 'existing-image mb-3'
+            preview.style.display = 'block'
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader()
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result
+                    input.parentNode.insertBefore(preview, input.nextSibling)
+                    
+                    // Check image dimensions
+                    const img = new Image()
+                    img.onload = function() {
+                        if (this.width !== 800 || this.height !== 800) {
+                            alert('Image must be exactly 800x800 pixels!')
+                            input.value = ''
+                            preview.remove()
+                        }
+                    }
+                    img.src = e.target.result
+                }
+                
+                reader.readAsDataURL(input.files[0])
+            }
+        }
+    </script>
+</body>
+</html>
