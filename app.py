@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect  
+from flask_wtf.csrf import CSRFProtect, CSRFError  # Added CSRFError
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,12 +11,9 @@ from datetime import datetime
 
 # Initialize Flask app
 app = Flask(__name__, template_folder='templates', static_folder='static')
-app.secret_key = "your_secret_key_here" 
 
-# Initialize CSRF protection
-csrf = CSRFProtect(app)  
-
-# Database Configuration
+# Configuration
+app.secret_key = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-here'  # Updated secret key handling
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
@@ -24,14 +21,15 @@ app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
 app.config['GALLERY_IMAGE_SIZE'] = (800, 800)
 
-# Initialize Database
+# Initialize Extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+csrf = CSRFProtect(app)  # CSRF Protection
 
-# Created upload folder
+# Create upload folder
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Database Models
+# Database Models (unchanged)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -50,7 +48,7 @@ class Place(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# Helper Functions
+# Helper Functions (unchanged)
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -60,12 +58,18 @@ def validate_image_size(image):
     image.seek(0)
     return img.size == app.config['GALLERY_IMAGE_SIZE']
 
-# Template filter
+# Template filter (unchanged)
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format='%b %d, %Y %I:%M %p'):
     return value.strftime(format)
 
-# Admin Routes
+# CSRF Error Handler (NEW)
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    flash('The form submission was invalid. Please try again.', 'danger')
+    return redirect(request.referrer or url_for('home'))
+
+# Admin Routes (unchanged except for ensuring CSRF protection)
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if session.get('is_admin'):
@@ -134,7 +138,7 @@ def check_admin_access():
             flash("Admin access required", "danger")
             return redirect(url_for('login'))
 
-# Regular Routes
+# Regular Routes (unchanged except for ensuring CSRF protection)
 @app.route('/')
 def home():
     places = Place.query.order_by(Place.timestamp.desc()).all()
@@ -299,18 +303,15 @@ def delete_place(place_id):
     
     place = Place.query.get_or_404(place_id)
     
-    # Authorization check
     if not (session['is_admin'] or place.user_id == session['user_id']):
         flash("You don't have permission to delete this place", "danger")
         return redirect(url_for('dashboard'))
 
     try:
-        # Delete the image file first
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], place.image)
         if os.path.exists(image_path):
             os.remove(image_path)
             
-        # Delete from database
         db.session.delete(place)
         db.session.commit()
         flash("Place deleted successfully", "success")
