@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect  # Add this import
+from flask_wtf.csrf import CSRFProtect  
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,10 +11,10 @@ from datetime import datetime
 
 # Initialize Flask app
 app = Flask(__name__, template_folder='templates', static_folder='static')
-app.secret_key = "your_secret_key_here"
+app.secret_key = "your_secret_key_here" 
 
 # Initialize CSRF protection
-csrf = CSRFProtect(app)  # Add this line
+csrf = CSRFProtect(app)  
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
@@ -28,7 +28,7 @@ app.config['GALLERY_IMAGE_SIZE'] = (800, 800)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Create upload folder
+# Created upload folder
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Database Models
