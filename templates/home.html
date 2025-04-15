@@ -18,7 +18,7 @@
                 <h3 class="fw-bold" style="color: var(--accent-yellow);">Hidden Gems</h3>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon">btn</span>
+                <span class="navbar-toggler-icon">.</span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -44,10 +44,10 @@
         <div class="container">
             <div class="row text-center">
                 <div class="col-12">
-                    <h1 class="hero-heading mb-4 fw-bold">Discover Hidden Treasures</h1>
-                    <p class="lead mb-4">Share your secret spots with the world</p>
+                    <h1 class="hero-heading mb-4 fw-bold">Find and share hidden gems to boost local tourism and adventure.</h1>
+                    <p class="lead mb-4">Show the world your favorite offbeat destinations.</p>
 
-                    <a href="{{ url_for('add_place') }}" class="btn btn-lg login-btn">Add Your Place</a>
+                    <a href="{{ url_for('add_place') }}" class="btn btn-lg login-btn">Share a Hidden Gem</a>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
                 {% endfor %}
             </div>
             <div class="text-center mt-5">
-                <a href="{{ url_for('login') }}" class="btn login-btn">Add Your Hidden Place</a>
+                <a href="{{ url_for('login') }}" class="btn login-btn">Share a Hidden Gem</a>
             </div>
         </div>
     </section>

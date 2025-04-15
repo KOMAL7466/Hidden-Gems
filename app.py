@@ -19,7 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
-app.config['GALLERY_IMAGE_SIZE'] = (800, 800)
+# app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG, Max 300MB")
 
 # Initialize Extensions
 db = SQLAlchemy(app)
@@ -53,10 +53,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-def validate_image_size(image):
-    img = Image.open(io.BytesIO(image.read()))
-    image.seek(0)
-    return img.size == app.config['GALLERY_IMAGE_SIZE']
+
 
 # Template filter (unchanged)
 @app.template_filter('datetimeformat')
@@ -229,9 +226,9 @@ def add_place():
                 flash('Invalid image format', 'danger')
                 return redirect(request.url)
             
-            if not validate_image_size(file):
-                flash('Image must be 800x800 pixels', 'danger')
-                return redirect(request.url)
+            # if not validate_image_size(file):
+            #     flash('Image must be JPG/PNG, Max 300MB', 'danger')
+            #     return redirect(request.url)
             
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
