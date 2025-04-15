@@ -276,7 +276,7 @@ def edit_place(place_id):
             if 'image' in request.files:
                 file = request.files['image']
                 if file and allowed_file(file.filename):
-                    if validate_image_size(file):
+                    # if validate_image_size(file):
                         filename = secure_filename(file.filename)
                         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                         file.save(filepath)
