@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect, CSRFError  # Added CSRFError
+from flask_wtf.csrf import CSRFProtect, CSRFError  
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,23 +13,21 @@ from datetime import datetime
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Configuration
-app.secret_key = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-here'  # Updated secret key handling
+app.secret_key = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-here'  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
-# app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG, Max 300MB")
+app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG/GIF, Max 500MB")
 
 # Initialize Extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-csrf = CSRFProtect(app)  # CSRF Protection
-
-# Create upload folder
+csrf = CSRFProtect(app)  
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Database Models (unchanged)
+# Database Models 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -48,25 +46,49 @@ class Place(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# Helper Functions (unchanged)
+# Helper Functions 
 def allowed_file(filename):
+    """Check if the file extension is allowed"""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+def validate_image(image):
+    """Validate image file with proper error messages"""
+    try:
+       
+        if not image or image.filename == '':
+            return False, "No image selected"
+            
+       
+        if not allowed_file(image.filename):
+            return False, "Only JPG, PNG or GIF images allowed"
+            
+       
+        image.seek(0, 2)  
+        file_size = image.tell()
+        image.seek(0)  
+        
+        max_size = 500 * 1024 * 1024 # 500MB
+        if file_size > max_size:
+            size_mb = file_size / (1024 * 1024)
+            return False, f"Image too large ({size_mb:.1f}MB). Max 500MB allowed"
+            
+        return True, "Image validated"
+        
+    except Exception as e:
+        return False, f"Error processing image: {str(e)}"
 
-
-# Template filter (unchanged)
+# Template filter 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format='%b %d, %Y %I:%M %p'):
     return value.strftime(format)
 
-# CSRF Error Handler (NEW)
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     flash('The form submission was invalid. Please try again.', 'danger')
     return redirect(request.referrer or url_for('home'))
 
-# Admin Routes (unchanged except for ensuring CSRF protection)
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if session.get('is_admin'):
@@ -135,7 +157,7 @@ def check_admin_access():
             flash("Admin access required", "danger")
             return redirect(url_for('login'))
 
-# Regular Routes (unchanged except for ensuring CSRF protection)
+# Regular Routes 
 @app.route('/')
 def home():
     places = Place.query.order_by(Place.timestamp.desc()).all()
@@ -217,19 +239,18 @@ def add_place():
 
     if request.method == 'POST':
         try:
+        
             if 'image' not in request.files:
                 flash('No image selected', 'danger')
                 return redirect(request.url)
             
             file = request.files['image']
-            if not (file and allowed_file(file.filename)):
-                flash('Invalid image format', 'danger')
+            is_valid, msg = validate_image(file)
+            if not is_valid:
+                flash(msg, 'danger')
                 return redirect(request.url)
             
-            # if not validate_image_size(file):
-            #     flash('Image must be JPG/PNG, Max 300MB', 'danger')
-            #     return redirect(request.url)
-            
+           
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
@@ -273,14 +294,19 @@ def edit_place(place_id):
             place.description = request.form.get('description')
             place.best_time = request.form.get('best_time')
 
+            
             if 'image' in request.files:
                 file = request.files['image']
-                if file and allowed_file(file.filename):
-                    # if validate_image_size(file):
-                        filename = secure_filename(file.filename)
-                        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        file.save(filepath)
-                        place.image = filename
+                if file and file.filename != '':  
+                    is_valid, msg = validate_image(file)
+                    if not is_valid:
+                        flash(msg, 'danger')
+                        return redirect(request.url)
+                    
+                    filename = secure_filename(file.filename)
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(filepath)
+                    place.image = filename
 
             db.session.commit()
             flash('Place updated successfully!', 'success')
