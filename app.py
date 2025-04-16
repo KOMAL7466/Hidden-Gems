@@ -16,10 +16,10 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-here'  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024 
-app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG/GIF, 500 * 1024 * 1024")
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
+app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG/GIF, Max 500MB")
 
 # Initialize Extensions
 db = SQLAlchemy(app)
@@ -55,15 +55,12 @@ def allowed_file(filename):
 def validate_image(image):
     """Validate image file with proper error messages"""
     try:
-       
         if not image or image.filename == '':
             return False, "No image selected"
             
-       
         if not allowed_file(image.filename):
             return False, "Only JPG, PNG or GIF images allowed"
             
-       
         image.seek(0, 2)  
         file_size = image.tell()
         image.seek(0)  
@@ -83,6 +80,10 @@ def validate_image(image):
 def datetimeformat(value, format='%b %d, %Y %I:%M %p'):
     return value.strftime(format)
 
+# Serve uploaded files
+@app.route('/static/uploads/<filename>')
+def serve_upload(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
@@ -239,7 +240,6 @@ def add_place():
 
     if request.method == 'POST':
         try:
-        
             if 'image' not in request.files:
                 flash('No image selected', 'danger')
                 return redirect(request.url)
@@ -250,10 +250,10 @@ def add_place():
                 flash(msg, 'danger')
                 return redirect(request.url)
             
-           
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
+            print(f"DEBUG: File saved to {filepath}")  # Debug output
 
             new_place = Place(
                 name=request.form.get('name'),
@@ -294,7 +294,6 @@ def edit_place(place_id):
             place.description = request.form.get('description')
             place.best_time = request.form.get('best_time')
 
-            
             if 'image' in request.files:
                 file = request.files['image']
                 if file and file.filename != '':  
@@ -307,6 +306,7 @@ def edit_place(place_id):
                     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                     file.save(filepath)
                     place.image = filename
+                    print(f"DEBUG: Updated image saved to {filepath}")  # Debug output
 
             db.session.commit()
             flash('Place updated successfully!', 'success')
