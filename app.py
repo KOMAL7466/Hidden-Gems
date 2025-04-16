@@ -18,8 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB
-app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG/GIF, Max 500MB")
+app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024 
+app.config['GALLERY_IMAGE_SIZE'] = ("JPG/PNG/GIF, 500 * 1024 * 1024")
 
 # Initialize Extensions
 db = SQLAlchemy(app)
