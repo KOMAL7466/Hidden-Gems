@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect, CSRFError  # Added CSRFError
+from flask_wtf.csrf import CSRFProtect, CSRFError  
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,7 +13,7 @@ from datetime import datetime
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Configuration
-app.secret_key = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-here'  # Updated secret key handling
+app.secret_key = os.environ.get('SECRET_KEY') or 'your-strong-secret-key-here'  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
@@ -24,12 +24,12 @@ app.config['GALLERY_IMAGE_SIZE'] = (800, 800)
 # Initialize Extensions
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-csrf = CSRFProtect(app)  # CSRF Protection
+csrf = CSRFProtect(app)  
 
 # Create upload folder
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Database Models (unchanged)
+# Database Models 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -48,7 +48,7 @@ class Place(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# Helper Functions (unchanged)
+# Helper Functions 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -58,18 +58,18 @@ def validate_image_size(image):
     image.seek(0)
     return img.size == app.config['GALLERY_IMAGE_SIZE']
 
-# Template filter (unchanged)
+# Template filter 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format='%b %d, %Y %I:%M %p'):
     return value.strftime(format)
 
-# CSRF Error Handler (NEW)
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     flash('The form submission was invalid. Please try again.', 'danger')
     return redirect(request.referrer or url_for('home'))
 
-# Admin Routes (unchanged except for ensuring CSRF protection)
+# Admin Routes 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if session.get('is_admin'):
@@ -138,7 +138,7 @@ def check_admin_access():
             flash("Admin access required", "danger")
             return redirect(url_for('login'))
 
-# Regular Routes (unchanged except for ensuring CSRF protection)
+# Regular Routes 
 @app.route('/')
 def home():
     places = Place.query.order_by(Place.timestamp.desc()).all()
