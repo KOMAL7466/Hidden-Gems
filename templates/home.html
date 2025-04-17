@@ -7,6 +7,7 @@
     <title>Hidden Gems | Discover Secret Places</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
@@ -17,7 +18,7 @@
                 <h3 class="fw-bold" style="color: var(--accent-yellow);">Hidden Gems</h3>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon">.</span>
+                <span class="navbar-toggler-icon">btn</span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -43,9 +44,10 @@
         <div class="container">
             <div class="row text-center">
                 <div class="col-12">
-                    <h1 class="hero-heading mb-4 fw-bold">Find and share hidden gems to boost local tourism and adventure.</h1>
-                    <p class="lead mb-4">Show the world your favorite offbeat destinations.</p>
-                    <a href="{{ url_for('add_place') }}" class="btn btn-lg login-btn">Share a Hidden Gem</a>
+                    <h1 class="hero-heading mb-4 fw-bold">Discover Hidden Treasures</h1>
+                    <p class="lead mb-4">Share your secret spots with the world</p>
+
+                    <a href="{{ url_for('add_place') }}" class="btn btn-lg login-btn">Add Your Place</a>
                 </div>
             </div>
         </div>
@@ -65,7 +67,7 @@
                     </p>
                 </div>
                 <div class="col-md-6 text-center">
-                    <img src="{{ url_for('static', filename='images/About-map.jpg') }}" alt="Map" class="img-fluid" style="max-height: 400px;">
+                    <img src="/static/images/About-map.jpg" alt="Map" class="img-fluid" style="max-height: 400px;">
                 </div>
             </div>
         </div>
@@ -79,7 +81,7 @@
                 {% for place in places %}
                 <div class="col-md-6">
                     <div class="place-card">
-                        <img src="{{ url_for('serve_upload', filename=place.image) }}" class="place-img w-100" alt="{{ place.name }}">
+                        <img src="/static/uploads/{{ place.image }}" class="place-img w-100" alt="{{ place.name }}">
                         <div class="p-4">
                             <h4>{{ place.name }}</h4>
                             <p class="text-muted">{{ place.location }}</p>
@@ -90,7 +92,7 @@
                 {% endfor %}
             </div>
             <div class="text-center mt-5">
-                <a href="{{ url_for('login') }}" class="btn login-btn">Share a Hidden Gem</a>
+                <a href="{{ url_for('login') }}" class="btn login-btn">Add Your Hidden Place</a>
             </div>
         </div>
     </section>
@@ -103,7 +105,7 @@
                 <div class="col-md-4">
                     <div class="testimonial-card p-4">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ url_for('static', filename='images/user 1.png') }}" class="testimonial-img rounded-circle me-3" alt="User">
+                            <img src="/static/images/user 1.png" class="testimonial-img rounded-circle me-3" alt="User">
                             <div>
                                 <h5 class="mb-0">Sarah Johnson</h5>
                                 <small>Travel Blogger</small>
@@ -112,11 +114,12 @@
                         <p class="mb-0">"Found the most amazing secluded beach through this platform! Exactly the kind
                             of authentic experience I was looking for."</p>
                     </div>
+
                 </div>
                 <div class="col-md-4">
                     <div class="testimonial-card p-4">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ url_for('static', filename='images/user 1.png') }}" class="testimonial-img rounded-circle me-3" alt="User">
+                            <img src="/static/images/user 1.png" class="testimonial-img rounded-circle me-3" alt="User">
                             <div>
                                 <h5 class="mb-0">Sarah Johnson</h5>
                                 <small>Travel Blogger</small>
@@ -125,11 +128,12 @@
                         <p class="mb-0">"Found the most amazing secluded beach through this platform! Exactly the kind
                             of authentic experience I was looking for."</p>
                     </div>
+
                 </div>
                 <div class="col-md-4">
                     <div class="testimonial-card p-4">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ url_for('static', filename='images/user 1.png') }}" class="testimonial-img rounded-circle me-3" alt="User">
+                            <img src="/static/images/user 1.png" class="testimonial-img rounded-circle me-3" alt="User">
                             <div>
                                 <h5 class="mb-0">Sarah Johnson</h5>
                                 <small>Travel Blogger</small>
@@ -138,7 +142,10 @@
                         <p class="mb-0">"Found the most amazing secluded beach through this platform! Exactly the kind
                             of authentic experience I was looking for."</p>
                     </div>
+
                 </div>
+
+                <!-- Add more testimonials -->
             </div>
         </div>
     </section>
@@ -148,7 +155,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5 class="animated-text mb-4">Hidden Gems</h5>
+                    <h5 class="animated-text mb-4">Hidden Gems
+                    </h5>
                     <p class="text-muted" style="color: (--accent-yellow);">Preserving the world's secret wonders</p>
                 </div>
                 <div class="col-md-6 text-end">
@@ -160,7 +168,7 @@
                 </div>
             </div>
             <hr class="my-4">
-            <p class="text-center text-muted mb-0" style="color: (--accent-yellow);">&copy; 2025 Hidden Gems. All
+            <p class="text-center text-muted mb-0 " style="color: (--accent-yellow);">&copy; 2025 Hidden Gems. All
                 rights reserved.</p>
         </div>
     </footer>
@@ -187,4 +195,5 @@
         });
     </script>
 </body>
+
 </html>

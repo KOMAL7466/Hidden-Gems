@@ -82,11 +82,11 @@
                         </div>
                     </div>
 
-                  
+                    <!-- Right Column -->
                     <div class="col-md-6">
-                        
+                        <!-- Image Upload -->
                         <div class="mb-4">
-                            <label for="image" class="form-label">Upload Image ("JPG/PNG/GIF, Max 500MB")</label>
+                            <label for="image" class="form-label">Upload Image (800x800px)</label>
                             <input type="file" 
                                    class="form-control custom-file-input" 
                                    id="image" 
@@ -165,8 +165,11 @@
                     // Check image dimensions
                     const img = new Image()
                     img.onload = function() {
-                       
-                        
+                        if (this.width !== 800 || this.height !== 800) {
+                            alert('Image must be exactly 800x800 pixels!')
+                            input.value = ''
+                            previewContainer.style.display = 'none'
+                        }
                     }
                     img.src = e.target.result
                 }
