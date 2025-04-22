@@ -78,8 +78,9 @@
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ url_for('edit_place', place_id=place.id) }}" 
-                                           class="btn btn-primary {% if not (session['is_admin'] or place.author.email == session['email']) %}disabled{% endif %}"
-                                           {% if not (session['is_admin'] or place.author.email == session['email']) %}
+                                           class="btn btn-primary {% if not (session['is_admin'] or place.user_id == session['user_id']) %}disabled{% endif %}"
+
+                                           {% if not (session['is_admin'] or place.user_id == session['user_id']) %}
                                            title="You can only edit your own places"
                                            {% endif %}>
                                             <i class="fas fa-edit"></i>
@@ -87,7 +88,7 @@
                                         
                                         <button class="btn btn-danger delete-btn"
                                                 data-place-id="{{ place.id }}"
-                                                {% if not (session['is_admin'] or place.author.email == session['email']) %}
+                                                {% if not (session['is_admin'] or place.user_id == session['user_id']) %}
                                                 disabled title="You can only delete your own places"
                                                 {% endif %}>
                                             <i class="fas fa-trash-alt"></i>
@@ -101,7 +102,7 @@
                 </div>
                 {% else %}
                 <div class="text-center py-5">
-                    <img src="{{ url_for('static', filename='img/empty.svg') }}" class="mb-4" style="height: 150px;">
+                    <img src="{{ url_for('static', filename='images/png wel..jpg') }}" class="mb-4" style="height: 80px;">
                     <h4 class="text-muted">No places found</h4>
                     <a href="{{ url_for('add_place') }}" class="btn btn-primary mt-3">
                         <i class="fas fa-plus me-2"></i>Add Your First Place
