@@ -84,9 +84,9 @@
 
                     <!-- Right Column -->
                     <div class="col-md-6">
-                        <!-- Image Upload -->
+                        
                         <div class="mb-4">
-                            <label for="image" class="form-label">Upload Image (3000x3000px)</label>
+                            <label for="image" class="form-label">Upload Image </label>
                             <input type="file" 
                                    class="form-control custom-file-input" 
                                    id="image" 
@@ -150,36 +150,21 @@
         })()
 
         // Image Preview
-        function previewImage(event) {
-            const input = event.target
-            const preview = document.getElementById('preview')
-            const previewContainer = document.getElementById('imagePreview')
-            
-            if (input.files && input.files[0]) {
-                const reader = new FileReader()
-                
-                reader.onload = function(e) {
-                    preview.src = e.target.result
-                    previewContainer.style.display = 'block'
-                    
-                    // Check image dimensions
-                    const img = new Image()
-                    img.onload = function() {
-                        const maxWidth = 3000;
-                        const maxHeight = 3000;
-                        if (this.width > maxWidth || this.height > maxHeight) {
-                            alert(`Image must be no larger than ${maxWidth}x${maxHeight} pixels!`);
-                            input.value = '';
-                            preview.remove();
-                        }
-                    }
-                    img.src = e.target.result
-                }
-                
-                reader.readAsDataURL(input.files[0])
-            }
+       // Updated previewImage() without size validation
+       function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('imagePreview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
         }
-
+    }
         // Character Counter
         const description = document.getElementById('description')
         const charCount = document.getElementById('charCount')

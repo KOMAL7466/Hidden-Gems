@@ -17,8 +17,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hidden_gems.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB 
-app.config['GALLERY_IMAGE_SIZE'] = (3000, 3000)  
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  
+# app.config['GALLERY_IMAGE_SIZE'] = (800, 800)  
 
 # Initialize Extensions
 db = SQLAlchemy(app)
@@ -228,8 +228,8 @@ def add_place():
                 flash('Invalid image format', 'danger')
                 return redirect(request.url)
             
-            if not validate_image_size(file):
-                flash('Image must be 3000x3000 pixels', 'danger')
+            if not allowed_file(file.filename):  # Only checks extension now
+                flash('Allowed formats: PNG, JPG, JPEG, GIF, WEBP', 'danger')
                 return redirect(request.url)
             
             filename = secure_filename(file.filename)
