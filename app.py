@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError  
+from flask_wtf.csrf import generate_csrf
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -35,6 +36,7 @@ class User(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    is_permanent_admin = db.Column(db.Boolean, default=False) 
     places = db.relationship('Place', backref='author', lazy=True)
 
 class Place(db.Model):
@@ -69,30 +71,56 @@ def handle_csrf_error(e):
     return redirect(request.referrer or url_for('home'))
 
 # Admin Routes 
+# @app.route('/create_admin')
+# def create_admin():
+#     from werkzeug.security import generate_password_hash
+#     admin = User(
+#         email="admin7466208@gmail.com",
+#         first_name="SuperAdmin",
+#         password=generate_password_hash("Admin$7466"),
+#         is_admin=True,
+#         is_permanent_admin=True
+#     )
+#     db.session.add(admin)
+#     db.session.commit()
+#     return "Admin created! Remove this route after use."
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if session.get('is_admin'):
         return redirect(url_for('admin_dashboard'))
 
     if request.method == 'POST':
-        email = request.form.get('email', '').strip().lower()
-        password = request.form.get('password', '')
+        try:
+            if not request.form.get('csrf_token'):
+                flash("Invalid form submission", "danger")
+                return redirect(url_for('admin_login'))
+            
+            email = request.form.get('email', '').strip().lower()
+            password = request.form.get('password', '')
 
-        user = User.query.filter_by(email=email, is_admin=True).first()
+            if not email or not password:
+                flash("Email and password are required", "danger")
+                return redirect(url_for('admin_login'))
+
+            user = User.query.filter_by(email=email, is_admin=True).first()
+            
+            if user and check_password_hash(user.password, password):
+                session['logged_in'] = True
+                session['user_id'] = user.id
+                session['email'] = user.email
+                session['username'] = user.first_name
+                session['is_admin'] = True
+                flash("Admin login successful!", "success")
+                return redirect(url_for('admin_dashboard'))
+            
+            flash("Invalid admin credentials", "danger")
         
-        if user and check_password_hash(user.password, password):
-            session['logged_in'] = True
-            session['user_id'] = user.id
-            session['email'] = user.email
-            session['username'] = user.first_name
-            session['is_admin'] = True
-            flash("Admin login successful!", "success")
-            return redirect(url_for('admin_dashboard'))
-        
-        flash("Invalid admin credentials", "danger")
+        except Exception as e:
+            app.logger.error(f"Login error: {str(e)}")
+            flash("An error occurred during login", "danger")
+
     
     return render_template("admin_login.html")
-
 @app.route('/admin/dashboard')
 def admin_dashboard():
     if not session.get('is_admin'):
@@ -129,6 +157,29 @@ def toggle_user(user_id):
     action = "promoted to admin" if user.is_admin else "demoted from admin"
     flash(f"User {user.email} has been {action}", "success")
     return redirect(url_for('admin_dashboard'))
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    if not session.get('is_admin'):
+        flash("Admin access required", "danger")
+        return redirect(url_for('login'))
+    
+    user = User.query.get_or_404(user_id)
+    
+    if user.is_permanent_admin:
+        flash("Cannot delete permanent admin", "danger")
+        return redirect(url_for('admin_dashboard'))
+    
+    try:
+        # Delete user's places first
+        Place.query.filter_by(user_id=user.id).delete()
+        db.session.delete(user)
+        db.session.commit()
+        flash("User deleted successfully", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error deleting user: {str(e)}", "danger")
+    
+    return redirect(url_for('admin_dashboard'))
 
 @app.before_request
 def check_admin_access():
@@ -136,6 +187,7 @@ def check_admin_access():
         if not session.get('is_admin'):
             flash("Admin access required", "danger")
             return redirect(url_for('login'))
+        
 
 # Regular Routes 
 @app.route('/')

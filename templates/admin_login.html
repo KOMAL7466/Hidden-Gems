@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | Hidden Places</title>
-   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -43,6 +42,9 @@
             color: #000;
             font-weight: 600;
         }
+        .alert {
+            border-left: 4px solid var(--yellow-accent);
+        }
     </style>
 </head>
 <body>
@@ -57,20 +59,22 @@
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        <div class="alert alert-{{ category }} alert-dismissible fade show mb-4">
                             {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert">.</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
 
-                <form action="{{ url_for('admin_login') }}" method="POST">
+                <form method="POST" action="{{ url_for('admin_login') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
                     <div class="mb-3">
                         <label for="email" class="form-label">Admin Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email" required autofocus>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
@@ -85,7 +89,15 @@
         </div>
     </div>
 
-   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-focus email field on page load
+        document.getElementById('email').focus();
+        
+        // Better alert dismiss buttons
+        document.querySelectorAll('.btn-close').forEach(btn => {
+            btn.innerHTML = '×'; // Proper close icon
+        });
+    </script>
 </body>
 </html>

@@ -12,7 +12,7 @@
         :root {
             --dark-bg: #1a1a1a;
             --darker-bg: #121212;
-            --yellow-accent: #ffc107;
+            --yellow-accent: hsl(45, 100%, 51%);
         }
         body {
             background: var(--darker-bg);
@@ -59,6 +59,9 @@
         .main-content {
             margin-left: 250px;
             padding: 20px;
+        }
+        .action-buttons {
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -136,7 +139,7 @@
 
         <!-- Users Table -->
         <div class="card mb-4" id="users">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5><i class="fas fa-users me-2"></i>User Management</h5>
             </div>
             <div class="card-body">
@@ -144,7 +147,7 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <!-- <th>ID</th> -->
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Places</th>
@@ -155,7 +158,7 @@
                         <tbody>
                             {% for user in users %}
                             <tr>
-                                <td>{{ user.id }}</td>
+                                <!-- <td>{{ user.id }}</td> -->
                                 <td>{{ user.first_name }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.places|length }}</td>
@@ -166,13 +169,24 @@
                                         <span class="badge bg-secondary">User</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-warning">
-                                        <i class="fas fa-edit">bt</i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger ms-1">
-                                        <i class="fas fa-trash-alt">bt</i>
-                                    </button>
+                                <td class="action-buttons">
+                                    {% if not user.is_permanent_admin %}
+                                    <form action="{{ url_for('toggle_user', user_id=user.id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                            <i class="fas fa-user-shield"></i> {{ 'Demote' if user.is_admin else 'Promote' }}
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" class="d-inline ms-1">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this user?')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted">Permanent Admin</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -184,7 +198,7 @@
 
         <!-- Places Table -->
         <div class="card" id="places">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5><i class="fas fa-map-marked-alt me-2"></i>Place Management</h5>
             </div>
             <div class="card-body">
@@ -192,7 +206,7 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <!-- <th>ID</th> -->
                                 <th>Place Name</th>
                                 <th>Location</th>
                                 <th>Added By</th>
@@ -203,20 +217,22 @@
                         <tbody>
                             {% for place in places %}
                             <tr>
-                                <td>{{ place.id }}</td>
+                                <!-- <td>{{ place.id }}</td> -->
                                 <td>{{ place.name }}</td>
                                 <td>{{ place.location }}</td>
                                 <td>{{ place.author.first_name }}</td>
                                 <td>{{ place.timestamp|datetimeformat }}</td>
-                                <td>
+                                <td class="action-buttons">
                                     <a href="{{ url_for('edit_place', place_id=place.id) }}" 
                                        class="btn btn-sm btn-outline-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ url_for('delete_place', place_id=place.id) }}" 
-                                          method="POST" style="display:inline;">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
-                                            <i class="fas fa-trash-alt">btn</i>
+                                          method="POST" class="d-inline ms-1">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Are you sure you want to delete this place?')">
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </form>
                                 </td>
@@ -233,11 +249,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script>
-        // Simple confirmation for delete actions
-        document.querySelectorAll('.btn-outline-danger').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (!confirm('Are you sure you want to delete this item?')) {
-                    e.preventDefault();
+        // Enhanced confirmation dialogs
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                if (form.querySelector('button[type="submit"]').classList.contains('btn-outline-danger')) {
+                    if (!confirm('This action cannot be undone. Are you sure?')) {
+                        e.preventDefault();
+                    }
                 }
             });
         });
