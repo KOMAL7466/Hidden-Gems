@@ -44,7 +44,11 @@
         <div class="container">
             <div class="row text-center">
                 <div class="col-12">
-                    <h1 class="hero-heading mb-4 fw-bold">Find the World's Best-Kept Travel Secrets—From Real Explorers!</h1>
+                    <h1 class="hero-heading">
+                        <span class="text-wrapper">
+                            Find the World's Best-Kept Travel Secrets—From Real Explorers!
+                        </span>
+                    </h1>
                     <p class="lead mb-4">Showcase the secret places only you know.</p>
 
                     <a href="{{ url_for('add_place') }}" class="btn btn-lg login-btn">Reveal Your Favorite Place</a>
@@ -52,6 +56,32 @@
             </div>
         </div>
     </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.querySelector('.hero-section');
+            const images = [
+                '/static/images/hero3.jpg',
+                '/static/images/hero1.jpg',
+                '/static/images/hero2.jpg',
+                '/static/images/hero img.jpg'
+            ];
+            
+            let currentIndex = 0;
+            
+            function changeBackground() {
+                heroSection.style.backgroundImage = 
+                    `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${images[currentIndex]}')`;
+                
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+            
+            // Set initial background
+            changeBackground();
+            
+            // Change every 5 seconds with fade effect
+            setInterval(changeBackground, 5000);
+        });
+    </script>
 
     <!-- About Section -->
     <section id="about" class="about-section">
@@ -134,6 +164,7 @@
                             <h4>{{ place.name }}</h4>
                             <p class="text-muted">{{ place.location }}</p>
                             <p>{{ place.description[:100] }}...</p>
+                            <a href="{{ url_for('place_details', place_id=place.id) }}" class="nav-link login-btn">View Details</a>
                         </div>
                     </div>
                 </div>
