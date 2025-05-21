@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect, CSRFError  
 from flask_wtf.csrf import generate_csrf
